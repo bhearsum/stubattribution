@@ -37,6 +37,7 @@ var validAttributionKeys = map[string]bool{
 	"ua":             true,
 	"visit_id":       true, // https://bugzilla.mozilla.org/show_bug.cgi?id=1677497
 	"session_id":     true, // https://bugzilla.mozilla.org/show_bug.cgi?id=1809120
+	"dlsource":       true, // https://github.com/mozilla-services/stubattribution/issues/159
 }
 
 // If any of these are not set in the incoming payload, they will be set to '(not set)'
@@ -71,6 +72,7 @@ type Code struct {
 	UA            string
 	VisitID       string
 	SessionID     string
+	DlSource      string
 
 	downloadToken string
 
@@ -192,6 +194,7 @@ func (v *Validator) Validate(code, sig, refererHeader string) (*Code, error) {
 		UA:            vals.Get("ua"),
 		VisitID:       vals.Get("visit_id"),
 		SessionID:     vals.Get("session_id"),
+		DlSource:      vals.Get("dlsource"),
 
 		rawURLVals: vals,
 	}

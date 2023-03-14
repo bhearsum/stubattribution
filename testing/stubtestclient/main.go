@@ -24,6 +24,7 @@ var (
 	variation     string
 	visitID       string
 	sessionID     string
+	dlsource      string
 
 	lang    string
 	os      string
@@ -60,6 +61,7 @@ func init() {
 	flag.StringVar(&installerType, "installer_type", "full", "installer_type")
 	flag.StringVar(&visitID, "visit_id", "vid", "visit_id")
 	flag.StringVar(&sessionID, "session_id", "sid", "session_id")
+	flag.StringVar(&dlsource, "dlsource", "allizom.org", "dlsource")
 
 	flag.StringVar(&lang, "lang", "en-US", "")
 	flag.StringVar(&os, "os", "win", "")
