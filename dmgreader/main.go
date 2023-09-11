@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -8,16 +9,22 @@ import (
 )
 
 func main() {
-	file, err := dmg.OpenFile("/Users/william/Downloads/Firefox 110.0.dmg")
+	file, err := dmg.OpenFile("/home/bhearsum/tmp/2023-09-11/target.dmg")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
-	data, err := file.ParseXMLPropertyList()
+	data, err := file.Parse()
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
+	// why everything nil?!
+	log.Println(data.Koly)
 
-	fmt.Println(data)
+	b, err := json.MarshalIndent(data.Koly, "", "  ")
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	fmt.Print(string(b))
 }

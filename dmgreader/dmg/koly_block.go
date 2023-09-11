@@ -59,7 +59,7 @@ func newKolyBlock() KolyBlock {
 	return block
 }
 
-func parseKolyBlock(input ReadAtSeeker) (*KolyBlock, error) {
+func parseKolyBlock(input ReaderAtSeeker) (*KolyBlock, error) {
 	block := new(KolyBlock)
 
 	// Get the offset from the end of the DMG file minus 512 bytes, which is

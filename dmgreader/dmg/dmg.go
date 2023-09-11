@@ -10,36 +10,41 @@ import (
 	"howett.net/plist"
 )
 
-// DMG is a structure representing a DMG file.
-type DMG struct {
-	name string
-	file *os.File
-}
-
-// ReadAtSeeker is the interface that groups the basic ReadAt and Seek methods.
-type ReadAtSeeker interface {
-	io.ReaderAt
-	io.Seeker
-}
-
 var (
 	ErrNoPropertyList = errors.New("dmg: no XML property list")
 )
 
+// DMG is a structure representing a DMG file and its related metadata.
+type DMG struct {
+	Koly      *KolyBlock
+	Resources *Resources
+	Data      []byte
+}
+
+// DMGFile is a structure representing a DMG file on a filesystem.
+type DMGFile struct {
+	name string
+	file *os.File
+}
+
 // OpenFile returns a new instance to interact with a DMG file. This function
 // might return an error if the file does not exist or if there is a problem
 // opening it. When you create an instance of DMG, you must close it.
-func OpenFile(name string) (*DMG, error) {
+func OpenFile(name string) (*DMGFile, error) {
 	file, err := os.Open(name)
 	if err != nil {
 		return nil, fmt.Errorf("dmg: %w", err)
 	}
 
-	return &DMG{name: name, file: file}, nil
+	return &DMGFile{name: name, file: file}, nil
+}
+
+func (d *DMGFile) Parse() (*DMG, error) {
+	return ParseDMG(d.file)
 }
 
 // Close closes the DMG file.
-func (d *DMG) Close() error {
+func (d *DMGFile) Close() error {
 	if d.file != nil {
 		return d.file.Close()
 	}
@@ -47,33 +52,43 @@ func (d *DMG) Close() error {
 	return nil
 }
 
-// ParseXMLPropertyList parses the XML property list pointed by the koly block.
-func (d *DMG) ParseXMLPropertyList() (map[string]interface{}, error) {
-	return parseXMLPropertyList(d.file)
-}
+// TODO: probably should break this down a bit more for unit testing purposes
+func ParseDMG(input ReaderSeeker) (*DMG, error) {
+	dmg := new(DMG)
 
-func parseXMLPropertyList(input ReadAtSeeker) (map[string]interface{}, error) {
-	var data map[string]interface{}
-
-	// We need to know the offset/length of the XML property list in the DMG
-	// file, which are conveniently stored in the "koly" block, assuming this
-	// block is present.
 	block, err := parseKolyBlock(input)
 	if err != nil {
-		return data, err
+		return dmg, fmt.Errorf("dmg: %w", err)
 	}
+
 	if block.XMLLength == 0 {
-		return data, ErrNoPropertyList
+		return dmg, ErrNoPropertyList
 	}
 
 	buf := make([]byte, block.XMLLength)
 	if _, err := input.ReadAt(buf, int64(block.XMLOffset)); err != nil {
-		return data, fmt.Errorf("dmg: %w", err)
+		return dmg, fmt.Errorf("dmg: %w", err)
 	}
 
+	var data map[string]interface{}
 	if err := plist.NewDecoder(bytes.NewReader(buf)).Decode(&data); err != nil {
-		return data, fmt.Errorf("dmg: %w", err)
+		return dmg, fmt.Errorf("dmg: %w", err)
 	}
 
-	return data, nil
+	resources, err := parseResources(data)
+	if err != nil {
+		return dmg, fmt.Errorf("dmg: %w", err)
+	}
+
+	input.Seek(0, io.SeekStart)
+	dmgData, err := io.ReadAll(input)
+	if err != nil {
+		return dmg, fmt.Errorf("dmg: %w", err)
+	}
+
+	dmg.Koly = block
+	dmg.Resources = resources
+	dmg.Data = dmgData
+
+	return dmg, nil
 }
