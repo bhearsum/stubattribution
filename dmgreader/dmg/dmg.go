@@ -12,6 +12,7 @@ import (
 
 var (
 	ErrNoPropertyList = errors.New("dmg: no XML property list")
+	ErrNoResourceFork = errors.New("dmg: no resource fork")
 )
 
 // DMG is a structure representing a DMG file and its related metadata.
@@ -75,7 +76,13 @@ func ParseDMG(input ReaderSeeker) (*DMG, error) {
 		return dmg, fmt.Errorf("dmg: %w", err)
 	}
 
-	resources, err := parseResources(data)
+	fork, ok := data["resource-fork"].(map[string]interface{})
+
+	if !ok {
+		return dmg, ErrNoResourceFork
+	}
+
+	resources, err := parseResources(fork)
 	if err != nil {
 		return dmg, fmt.Errorf("dmg: %w", err)
 	}
