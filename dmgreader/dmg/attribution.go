@@ -5,20 +5,22 @@ import (
 	"encoding/base64"
 	"encoding/binary"
 	"errors"
-	"strings"
+	"fmt"
 )
 
 const (
 	// TODO: this should be attr, but only after we start flipping the signature properly in libdmg-hfsplus
 	attrBlockSignature = "rtta"
-	attrBlockVersion   = "1"
+	attrBlockVersion   = 1
 	attrBlockSize      = 76
 )
 
 var (
 	ErrBadAttrBase64     = errors.New("attr: couldn't decode base64 data")
+	ErrBadAttrLength     = errors.New("attr: bad object length")
 	ErrBadAttrBinaryData = errors.New("attr: couldn't parse binary attribution data")
 	ErrBadAttrSignature  = errors.New("attr: invalid attribution signature")
+	ErrBadAttrVersion    = errors.New("attr: invalid attribution resource version")
 )
 
 type AttributionResource struct {
@@ -37,24 +39,32 @@ type AttributionResource struct {
 	AfterUncompressedLength    uint64
 }
 
-func parseAttribution(raw string) (*AttributionResource, error) {
+func ParseAttribution(raw string) (*AttributionResource, error) {
 	attr := new(AttributionResource)
 
 	if raw == "" {
 		return attr, nil
 	}
 
-	buf, err := base64.StdEncoding.DecodeString(strings.ReplaceAll(strings.ReplaceAll(raw, "\t", ""), "\n", ""))
+	buf, err := base64.StdEncoding.DecodeString(raw)
 	if err != nil {
 		return attr, ErrBadAttrBase64
 	}
 
+	if len(buf) != attrBlockSize {
+		return attr, ErrBadAttrLength
+	}
+
 	if err := binary.Read(bytes.NewReader(buf), binary.LittleEndian, attr); err != nil {
-		return attr, ErrBadAttrBinaryData
+		return attr, fmt.Errorf("attr: %w", err)
 	}
 
 	if !bytes.Equal(attr.Signature[:], []byte(attrBlockSignature)) {
 		return attr, ErrBadAttrSignature
+	}
+
+	if attr.Version != attrBlockVersion {
+		return attr, ErrBadAttrVersion
 	}
 
 	return attr, nil
