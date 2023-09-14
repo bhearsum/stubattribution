@@ -30,6 +30,8 @@ github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1m
 github.com/envoyproxy/go-control-plane v0.9.9-0.20201210154907-fd9021fe5dad/go.mod h1:cXg6YxExXjJnVBQHBLXeUAgxn2UodCpnH306RInaBQk=
 github.com/envoyproxy/go-control-plane v0.9.10-0.20210907150352-cf90f659a021/go.mod h1:AFq3mo9L8Lqqiid3OhADV3RfLJnjiw63cSpi+fDTRC0=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
+github.com/fatih/structs v1.1.0 h1:Q7juDM0QtcnhCpeyLGQKyg4TOIghuNXrkL32pHAUMxo=
+github.com/fatih/structs v1.1.0/go.mod h1:9NiDSp5zOcgEDl+j00MP/WkGVPOlPRLejGD8Ga6PJ7M=
 github.com/getsentry/sentry-go v0.24.1 h1:W6/0GyTy8J6ge6lVCc94WB6Gx2ZuLrgopnn9w8Hiwuk=
 github.com/getsentry/sentry-go v0.24.1/go.mod h1:lc76E2QywIyW8WuBnwl8Lc4bkmQH4+w1gwTf25trprY=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
@@ -102,6 +104,8 @@ github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
 github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
 github.com/stretchr/testify v1.8.2 h1:+h33VjcLVPDHtOdpUCuF+7gSuG3yGIftsP1YvFihtJ8=
+github.com/vimeo/go-util v1.4.1 h1:UbNoaYH1eHv4LqBSH6zIItj+zKqbln0i01oY3iA/QPM=
+github.com/vimeo/go-util v1.4.1/go.mod h1:r+yspV//C48HeMXV8nEvtUeNiIiGfVv3bbEHzOgudwE=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 go.mozilla.org/mozlog v0.0.0-20170222151521-4bb13139d403 h1:rKyWXYDfrVOpMFBion4Pmx5sJbQreQNXycHvm4KwJSg=
 go.mozilla.org/mozlog v0.0.0-20170222151521-4bb13139d403/go.mod h1:jHoPAGnDrCy6kaI2tAze5Prf0Nr0w/oNkROt2lw3n3o=
