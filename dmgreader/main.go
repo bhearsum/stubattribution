@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	file, err := dmg.OpenFile("/home/bhearsum/tmp/2023-09-11/target.dmg")
+	file, err := dmg.OpenFile("/home/bhearsum/repos/stubattribution/dmgreader/tests/fixtures/attributable.dmg")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -19,12 +19,17 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	// why everything nil?!
-	log.Println(data.Koly)
 
-	b, err := json.MarshalIndent(data.Koly, "", "  ")
+	rd, _ := data.Resources.GetResourceDataByName("blkx")
+
+	blkx, err := dmg.ParseBlkxData(rd[3].Data)
 	if err != nil {
-		fmt.Println("error:", err)
+		log.Printf("err: %s", err)
 	}
-	fmt.Print(string(b))
+	b, err := json.MarshalIndent(blkx, "", "  ")
+	if err != nil {
+		fmt.Printf("Error: %s", err)
+		return
+	}
+	fmt.Println(string(b))
 }
